@@ -37,6 +37,7 @@ public class ContentManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Arrays.sort(allCategories.toArray());
 //      TODO make it asynchronous
 //        articlesCallback.enqueue(new Callback<CategoriesResponse>() {
 //            @Override

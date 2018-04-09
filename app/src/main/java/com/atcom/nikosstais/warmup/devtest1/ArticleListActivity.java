@@ -45,9 +45,14 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
      */
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
+    private static String CATEGORY_SELECTED;
 
+    public ArticleListActivity(){
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CATEGORY_SELECTED = getString(R.string.categorySelected);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
@@ -79,8 +84,20 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
         View recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+
+        Integer categoryId = null;
+        if (getIntent()!=null && getIntent().getExtras() != null){
+            categoryId = (Integer) getIntent().getExtras().get(CATEGORY_SELECTED);
+        }
+
+        setupRecyclerView((RecyclerView) recyclerView, categoryId);
         //start drawer
+        setupDrawer();
+        //End drawer
+
+    }
+
+    private void setupDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -97,18 +114,25 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         List<Category> categories = ContentManager.getCategories();
         Menu menu = navigationView.getMenu();
         for (Category cat : categories){
-            MenuItem menuItem = menu.add(cat.getName());
-            menuItem.setTitle(cat.getName());
-        }
-        //End drawer
+            MenuItem menuItem = menu.add(cat.getId()+"");
 
+            Intent intent = new Intent(this.getApplicationContext(), ArticleListActivity.class);
+            intent.putExtra(CATEGORY_SELECTED, cat.getId());
+
+            menuItem.setTitle(cat.getName());
+            menuItem.setIntent(intent);
+        }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, Integer categoryId) {
 
+        List<Article> newsArticles = ContentManager.getNewsArticles();
+        if (categoryId!=null){
+            newsArticles = ContentManager.getNewsArticlesByCategory(categoryId, newsArticles);
+        }
         recyclerView.setAdapter(
                 new SimpleItemRecyclerViewAdapter(this,
-                                                    ContentManager.getNewsArticles(),
+                                                    newsArticles,
                                                     mTwoPane));
     }
 
@@ -148,24 +172,14 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        Context context = this.getApplicationContext();
+        context.startActivity(item.getIntent());
+
         return true;
     }
 

@@ -72,12 +72,20 @@ public class Category  implements Serializable, Comparable {
     public int compareTo(@NonNull Object o) {
         if (this.id == ((Category)o).id)
             return 0;
-        else
+        else if (this.id >((Category)o).id){
             return 1;
+        }else{
+            return -1;
+        }
     }
 
     @Override
     public int hashCode() {
         return this.id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id == ((Category)obj).id;
     }
 }
