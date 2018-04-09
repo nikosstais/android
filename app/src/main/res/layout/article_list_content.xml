@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -5,8 +6,15 @@
     android:textAlignment="gravity"
     >
 
+    <TextView
+        android:id="@+id/id_text"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        />
+
     <ImageView
-        android:id="@+id/newsEntryImageOld"
+        android:id="@+id/newsEntryImage"
         android:layout_width="110sp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -15,10 +23,10 @@
         android:src="@drawable/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/firstLineOld"
+        android:id="@+id/firstLine"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/newsEntryImageOld"
+        android:layout_toEndOf="@id/newsEntryImage"
         android:gravity="center_vertical"
         android:textSize="16sp"
         android:text="Title"
@@ -26,11 +34,20 @@
         />
 
     <TextView
-        android:id="@+id/secondLineOld"
+        android:id="@+id/secondLine"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/firstLine"
-        android:layout_toRightOf="@id/newsEntryImageOld"
+        android:layout_toEndOf="@id/newsEntryImage"
         android:text="Description"
         android:textSize="14sp" />
+
+
 </RelativeLayout>
+
+<!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+-->

@@ -70,7 +70,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             holder.layout.setBackgroundColor(Color.parseColor("white"));
         }
 
-
         holder.newsEntryTitle.setText(article.getTitle());
         holder.newsEntrySummary.setText(article.getSummary());
 
@@ -78,7 +77,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                 .load(article.getPhotoUrl())
                 .dontAnimate()
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT )
                 .into(holder.newsEntryImage);
 
         holder.newsEntryTitle.setOnClickListener(new View.OnClickListener() {

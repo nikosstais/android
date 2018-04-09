@@ -14,6 +14,19 @@
         <activity
             android:name=".NewsListActivity"
             android:theme="@style/AppTheme.SplashScreenTheme">
+        </activity>
+        <!--
+        <activity
+            android:name=".CategoriesActivity"
+            android:label="@string/title_activity_categories"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        -->
+        <activity
+            android:name=".ArticleListActivity"
+            android:label="@string/title_article_list"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,10 +34,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CategoriesActivity"
-            android:label="@string/title_activity_categories"
+            android:name=".ArticleDetailActivity"
+            android:label="@string/title_article_detail"
+            android:parentActivityName=".ArticleListActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.atcom.nikosstais.warmup.devtest1.ArticleListActivity" />
         </activity>
     </application>
 
