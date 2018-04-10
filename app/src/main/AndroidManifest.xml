@@ -20,12 +20,10 @@
             android:name=".CategoriesActivity"
             android:label="@string/title_activity_categories"
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
         -->
         <activity
             android:name=".ArticleListActivity"
-            android:label="@string/title_article_list"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

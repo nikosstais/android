@@ -45,34 +45,21 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
      */
     private boolean mTwoPane;
     private DrawerLayout mDrawerLayout;
-    private static String CATEGORY_SELECTED;
+    private static String CATEGORY_ID_SELECTED;
+    private static String CATEGORY_NAME_SELECTED;
+    private static RecyclerView recyclerView;
 
-    public ArticleListActivity(){
 
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CATEGORY_SELECTED = getString(R.string.categorySelected);
+        CATEGORY_ID_SELECTED = getString(R.string.categoryIDSelected);
+        CATEGORY_NAME_SELECTED = getString(R.string.categoryNameSelected);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
         //TODO remove StrictMode-investigate
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setTitle(getTitle());
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
 
         if (findViewById(R.id.article_detail_container) != null) {
             // The detail container view will be present only in the
@@ -82,15 +69,19 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.article_list);
+        recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
+
 
         Integer categoryId = null;
         if (getIntent()!=null && getIntent().getExtras() != null){
-            categoryId = (Integer) getIntent().getExtras().get(CATEGORY_SELECTED);
+
+            categoryId = (Integer) getIntent().getExtras().get(CATEGORY_ID_SELECTED);
+
+
         }
 
-        setupRecyclerView((RecyclerView) recyclerView, categoryId);
+        setupRecyclerView(categoryId);
         //start drawer
         setupDrawer();
         //End drawer
@@ -98,18 +89,22 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
     }
 
     private void setupDrawer() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        PrepareNavigationMenu(navigationView);
+    }
+
+    private void PrepareNavigationMenu(NavigationView navigationView) {
         navigationView.getMenu().clear();
         List<Category> categories = ContentManager.getCategories();
         Menu menu = navigationView.getMenu();
@@ -117,14 +112,15 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
             MenuItem menuItem = menu.add(cat.getId()+"");
 
             Intent intent = new Intent(this.getApplicationContext(), ArticleListActivity.class);
-            intent.putExtra(CATEGORY_SELECTED, cat.getId());
+            intent.putExtra(CATEGORY_ID_SELECTED, cat.getId());
+            intent.putExtra(CATEGORY_NAME_SELECTED, cat.getName());
 
             menuItem.setTitle(cat.getName());
             menuItem.setIntent(intent);
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, Integer categoryId) {
+    private void setupRecyclerView(Integer categoryId) {
 
         List<Article> newsArticles = ContentManager.getNewsArticles();
         if (categoryId!=null){
@@ -134,11 +130,12 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
                 new SimpleItemRecyclerViewAdapter(this,
                                                     newsArticles,
                                                     mTwoPane));
+        recyclerView.refreshDrawableState();
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -174,11 +171,18 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         // Handle navigation view item clicks here.
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
-        Context context = this.getApplicationContext();
-        context.startActivity(item.getIntent());
+        Integer categoryId = (Integer) item.getIntent().getExtras().get(CATEGORY_ID_SELECTED);
+        if (getSupportActionBar() == null){
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        getSupportActionBar().setTitle(item.getIntent().getExtras().get(CATEGORY_NAME_SELECTED).toString());
+        setupRecyclerView(categoryId);
+//        Context context = this.getApplicationContext();
+//        context.startActivity(item.getIntent());
 
         return true;
     }

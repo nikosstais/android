@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.atcom.nikosstais.warmup.devtest1.remote.data.Article;
@@ -59,17 +60,12 @@ public class ArticleDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            String content;
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-//                content = Html.fromHtml(mItem.getContent(), Html.FROM_HTML_MODE_COMPACT).toString();
-//            }else{
-//                content = Html.fromHtml(mItem.getContent()).toString();
-//
-//            }
             WebView viewById = (WebView) rootView.findViewById(R.id.article_detail);
             viewById.loadData(mItem.getContent().replaceAll("user-scalable=no", "user-scalable=yes"),
                     "text/html",
                     null);
+            viewById.getSettings().setJavaScriptEnabled(Boolean.TRUE);
+//            viewById.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
 //            viewById.getSettings().setLoadWithOverviewMode(true);
 //            viewById.getSettings().setUseWideViewPort(true);
         }
