@@ -1,11 +1,8 @@
-package com.atcom.nikosstais.warmup.devtest1;
+package com.atcom.nikosstais.warmup.devtest1.activity.articles;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,19 +10,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.atcom.nikosstais.warmup.devtest1.remote.data.Article;
-import com.atcom.nikosstais.warmup.devtest1.remote.data.Category;
+import com.atcom.nikosstais.warmup.devtest1.R;
+import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.atcom.nikosstais.warmup.devtest1.remote.managers.ContentManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -47,7 +39,7 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
     private DrawerLayout mDrawerLayout;
     private static String CATEGORY_ID_SELECTED;
     private static String CATEGORY_NAME_SELECTED;
-    private static RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
 
     @Override
@@ -77,14 +69,11 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         if (getIntent()!=null && getIntent().getExtras() != null){
 
             categoryId = (Integer) getIntent().getExtras().get(CATEGORY_ID_SELECTED);
-
-
         }
 
         setupRecyclerView(categoryId);
-        //start drawer
+
         setupDrawer();
-        //End drawer
 
     }
 
@@ -106,7 +95,7 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     private void PrepareNavigationMenu(NavigationView navigationView) {
         navigationView.getMenu().clear();
-        List<Category> categories = ContentManager.getCategories();
+        List<Category> categories = ContentManager.getCategories(getApplicationContext());
         Menu menu = navigationView.getMenu();
         for (Category cat : categories){
             MenuItem menuItem = menu.add(cat.getId()+"");
@@ -122,12 +111,12 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     private void setupRecyclerView(Integer categoryId) {
 
-        List<Article> newsArticles = ContentManager.getNewsArticles();
+        List<Article> newsArticles = ContentManager.getNewsArticles(getApplicationContext());
         if (categoryId!=null){
             newsArticles = ContentManager.getNewsArticlesByCategory(categoryId, newsArticles);
         }
         recyclerView.setAdapter(
-                new SimpleItemRecyclerViewAdapter(this,
+                new ArticlesRecyclerViewAdapter(this,
                                                     newsArticles,
                                                     mTwoPane));
         recyclerView.refreshDrawableState();
@@ -146,7 +135,7 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.categories, menu);
+        //getMenuInflater().inflate(R.menu.categories, menu);
         return true;
     }
 
@@ -168,8 +157,6 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -181,97 +168,9 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         }
         getSupportActionBar().setTitle(item.getIntent().getExtras().get(CATEGORY_NAME_SELECTED).toString());
         setupRecyclerView(categoryId);
-//        Context context = this.getApplicationContext();
-//        context.startActivity(item.getIntent());
 
         return true;
     }
 
-    public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final ArticleListActivity mParentActivity;
-        private final List<Article> mValues;
-        private final boolean mTwoPane;
-
-        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Article item = (Article) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putSerializable(ArticleDetailFragment.ARG_ITEM_ID, item);
-                    ArticleDetailFragment fragment = new ArticleDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.article_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, ArticleDetailActivity.class);
-                    intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, item);
-
-                    context.startActivity(intent);
-                }
-            }
-        };
-
-        SimpleItemRecyclerViewAdapter(ArticleListActivity parent,
-                                      List<Article> items,
-                                      boolean twoPane) {
-            mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.article_list_content, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            final Article article = mValues.get(position);
-            holder.mIdView.setText(article.getId().toString());
-            holder.newsEntryTitle.setText(article.getTitle());
-            holder.newsEntrySummary.setText(article.getSummary());
-            holder.itemView.setTag(mValues.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
-
-            if (position%2==0){
-                holder.itemView.setBackgroundColor(Color.parseColor("cyan"));
-            }else{
-                holder.itemView.setBackgroundColor(Color.parseColor("white"));
-            }
-
-            Glide.with(holder.itemView.getContext())
-                    .load(article.getPhotoUrl())
-                    .dontAnimate()
-                    .fitCenter()
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT )
-                    .into(holder.newsEntryImage);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView newsEntryTitle;
-            final TextView newsEntrySummary;
-            final ImageView newsEntryImage;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = view.findViewById(R.id.id_text);
-                newsEntryTitle = view.findViewById(R.id.firstLine);
-                newsEntrySummary = view.findViewById(R.id.secondLine);
-                newsEntryImage = view.findViewById(R.id.newsEntryImage);
-            }
-        }
-    }
 }

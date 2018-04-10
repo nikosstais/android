@@ -1,5 +1,6 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.data;
+package com.atcom.nikosstais.warmup.devtest1.remote.data.models;
 
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;

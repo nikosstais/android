@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.data;
+package com.atcom.nikosstais.warmup.devtest1.remote.data.models;
 
 import android.support.annotation.NonNull;
 

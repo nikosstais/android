@@ -7,4 +7,4 @@
     android:padding="16dp"
     android:textIsSelectable="true"
 
-    tools:context="com.atcom.nikosstais.warmup.devtest1.ArticleDetailFragment" />
+    tools:context="com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment" />

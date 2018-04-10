@@ -1,7 +1,7 @@
 package com.atcom.nikosstais.warmup.devtest1.remote.apis;
 
-import com.atcom.nikosstais.warmup.devtest1.remote.data.CategoriesResponse;
-import com.atcom.nikosstais.warmup.devtest1.remote.data.NewsArticlesResponse;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoriesResponse;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.NewsArticlesResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
