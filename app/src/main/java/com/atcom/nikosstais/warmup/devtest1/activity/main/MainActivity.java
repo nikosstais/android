@@ -19,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
         new Thread(){
             public void run(){
                 try {
-                    sleep(1000);
+                    sleep(2000);
                     Intent i = new Intent(MainActivity.this, ArticleListActivity.class);
                     startActivity(i);
+                    finish();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

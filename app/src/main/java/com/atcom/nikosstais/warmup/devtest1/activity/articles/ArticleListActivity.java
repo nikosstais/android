@@ -20,6 +20,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.atcom.nikosstais.warmup.devtest1.remote.managers.ContentManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,8 +58,8 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         CATEGORY_ID_SELECTED = getString(R.string.categoryIDSelected);
         CATEGORY_NAME_SELECTED = getString(R.string.categoryNameSelected);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
 
         if (findViewById(R.id.article_detail_container) != null) {
             // The detail container view will be present only in the
@@ -104,7 +105,13 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     private void PrepareNavigationMenu(NavigationView navigationView) {
         navigationView.getMenu().clear();
-        List<Category> categories = ContentManager.getCategories(getApplicationContext());
+        List<Category> categories = new ArrayList<>();
+        try {
+            categories = new ContentManager.FetchCategoriesTask().execute(getApplicationContext()).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Menu menu = navigationView.getMenu();
         for (Category cat : categories){
             MenuItem menuItem = menu.add(cat.getId()+"");
@@ -120,7 +127,13 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     private void setupRecyclerView(Integer categoryId) {
 
-        List<Article> newsArticles = ContentManager.getNewsArticles(getApplicationContext());
+        List<Article> newsArticles = null;
+        try {
+            newsArticles = new ContentManager.FetchNewsTask().execute(getApplicationContext()).get();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (categoryId!=null){
             newsArticles = ContentManager.getNewsArticlesByCategory(categoryId, newsArticles);
         }
@@ -162,8 +175,9 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         if (getSupportActionBar() == null){
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
+        }else{
+            getSupportActionBar().setTitle(item.getIntent().getExtras().get(CATEGORY_NAME_SELECTED).toString());
         }
-        getSupportActionBar().setTitle(item.getIntent().getExtras().get(CATEGORY_NAME_SELECTED).toString());
         setupRecyclerView(categoryId);
 
         return true;

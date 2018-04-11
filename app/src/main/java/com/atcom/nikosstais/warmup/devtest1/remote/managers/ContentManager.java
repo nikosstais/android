@@ -1,6 +1,7 @@
 package com.atcom.nikosstais.warmup.devtest1.remote.managers;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
 import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponses;
@@ -29,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nikos on 06/04/18.
  */
 
-public class ContentManager {
+public class ContentManager{
 
     private static final String TAG = ContentManager.class.toString();
     private static final String articleListUrl = "http://mobileapps.atcom.gr/services/protoThema/articlelist_gson.json";
@@ -57,18 +58,6 @@ public class ContentManager {
 
         List<Category> filteredCategories = filterOutEmptyCategories(allCategories, ctx);
         Arrays.sort(filteredCategories.toArray());
-//      TODO make it asynchronous
-//        articlesCallback.enqueue(new Callback<CategoriesResponse>() {
-//            @Override
-//            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
-//                currentActivity.getIntent().putExtra("categoriesResponse", response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CategoriesResponse> call, Throwable t) {
-//
-//            }
-//        });
 
         return filteredCategories;
     }
@@ -96,19 +85,6 @@ public class ContentManager {
         }
 
         Arrays.sort(allArticles.toArray());
-//      TODO make it asynchronous
-//        articlesCallback.enqueue(new Callback<NewsArticlesResponse>() {
-//            public NewsArticlesResponse articles;
-//            @Override
-//            public void onResponse(Call<NewsArticlesResponse> call, Response<NewsArticlesResponse> response) {
-//                ContentManager.this.notify();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<NewsArticlesResponse> call, Throwable t) {
-//
-//            }
-//        });
 
         return allArticles;
 
@@ -198,5 +174,23 @@ public class ContentManager {
         }
 
         return filteredCategories;
+    }
+    public static class FetchNewsTask extends AsyncTask<Context,Void,List<Article>>{
+
+        @Override
+        protected List<Article> doInBackground(Context... contexts) {
+            return getNewsArticles(contexts[0]);
+        }
+
+
+    }
+
+    public static class FetchCategoriesTask extends AsyncTask<Context, Void, List<Category>>{
+
+        @Override
+        protected List<Category> doInBackground(Context... contexts) {
+            return getCategories(contexts[0]);
+        }
+
     }
 }
