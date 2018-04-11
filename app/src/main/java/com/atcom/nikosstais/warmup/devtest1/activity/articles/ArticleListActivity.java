@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter;
@@ -35,21 +36,27 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
-    private DrawerLayout mDrawerLayout;
     private static String CATEGORY_ID_SELECTED;
     private static String CATEGORY_NAME_SELECTED;
+    private boolean mTwoPane;
+    private DrawerLayout mDrawerLayout;
     private RecyclerView recyclerView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        CATEGORY_ID_SELECTED = getString(R.string.categoryIDSelected);
-        CATEGORY_NAME_SELECTED = getString(R.string.categoryNameSelected);
+        //setTheme(R.style.AppTheme); //this added navigation shortcut below appbar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        //TODO remove StrictMode-investigate
+        //Replace background color
+        ((ViewGroup) this.findViewById(android.R.id.content))
+                .getChildAt(0)
+                .setBackgroundColor(getResources().getColor(R.color.white));
+
+        CATEGORY_ID_SELECTED = getString(R.string.categoryIDSelected);
+        CATEGORY_NAME_SELECTED = getString(R.string.categoryNameSelected);
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -79,7 +86,9 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     private void setupDrawer() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        if (getSupportActionBar()==null){
+            setSupportActionBar(toolbar);
+        }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -134,23 +143,11 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.categories, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
