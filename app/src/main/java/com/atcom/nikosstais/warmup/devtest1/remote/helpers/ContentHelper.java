@@ -11,7 +11,6 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoriesResponse;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.NewsArticlesResponse;
-import com.atcom.nikosstais.warmup.devtest1.remote.tools.NetworkUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -37,7 +36,7 @@ public class ContentHelper {
     public static List<Category> getCategories(Context ctx) {
 
         List<Category> allCategories = new ArrayList<>();
-        if (NetworkUtil.isNetworkAvailable(ctx)) {
+
             Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
             try {
                 CategoriesResponse mainResponse = categoriesCall.execute().body();
@@ -47,12 +46,10 @@ public class ContentHelper {
                     allCategories = mainResponse.getCategories();
                 }
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
+                allCategories = getCategoriesFromDB(ctx);
             }
-        } else {
-            allCategories = getCategoriesFromDB(ctx);
-        }
 
         return allCategories;
     }
@@ -60,7 +57,7 @@ public class ContentHelper {
     public static List<Category> getFilteredCategories(Context ctx) {
 
         List<Category> allCategories = new ArrayList<>();
-        if (NetworkUtil.isNetworkAvailable(ctx)) {
+
             Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
             try {
                 CategoriesResponse mainResponse = categoriesCall.execute().body();
@@ -72,15 +69,21 @@ public class ContentHelper {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                allCategories = getCategoriesFromDB(ctx);
             }
-        } else {
-            allCategories = getCategoriesFromDB(ctx);
+
+        if (allCategories.isEmpty()){
+            return allCategories;
         }
 
         Collections.sort(allCategories);
+
         Category homeCategory = allCategories.get(0);
+
         List<Category> filteredCategories = filterOutEmptyCategories(allCategories, ctx);
+
         filteredCategories.add(homeCategory);
+
         Collections.sort(filteredCategories);
 
         return filteredCategories;
@@ -90,20 +93,18 @@ public class ContentHelper {
 
         List<Article> allArticles = new ArrayList<>();
 
-        if (NetworkUtil.isNetworkAvailable(ctx)) {
-            Call<NewsArticlesResponse> articlesCall = getProtoThemaService().getArticles();
-            try {
-                NewsArticlesResponse mainResponse = articlesCall.execute().body();
+        Call<NewsArticlesResponse> articlesCall = getProtoThemaService().getArticles();
+        try {
 
-                if (mainResponse != null) {
-                    addArticleToDB(mainResponse, ctx);
-                    allArticles = mainResponse.getArticles();
-                }
+            NewsArticlesResponse mainResponse = articlesCall.execute().body();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (mainResponse != null) {
+                addArticleToDB(mainResponse, ctx);
+                allArticles = mainResponse.getArticles();
             }
-        } else {
+
+        } catch (Exception e) {
+            e.printStackTrace();
             allArticles = getArticlesFromDB(ctx);
         }
 
@@ -114,7 +115,7 @@ public class ContentHelper {
     }
 
     public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
-        if (categoryId==-1){
+        if (categoryId == -1){
             return articleList;
         }
         List<Article> categoryArticles = new ArrayList<>();
@@ -131,9 +132,15 @@ public class ContentHelper {
     }
 
     private static List<Article> getArticlesFromDB(Context ctx) {
-        ArticleCache articleCache = AppDatabase.getDatabase(ctx)
+        List<ArticleCache> articleCacheList = AppDatabase.getDatabase(ctx)
                 .articlesCacheDao()
-                .getLatestArticlesFromCache().get(0);
+                .getLatestArticlesFromCache();
+
+        if (articleCacheList.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        ArticleCache articleCache = articleCacheList.get(0);
 
         NewsArticlesResponse savedResponse = getGsonBuilder()
                 .fromJson(articleCache.responseText, NewsArticlesResponse.class);
