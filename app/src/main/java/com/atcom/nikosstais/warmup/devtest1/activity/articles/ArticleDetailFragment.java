@@ -42,12 +42,12 @@ public class ArticleDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments()!=null && getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments() != null && getArguments().containsKey(ARG_ITEM_ID)) {
 
             mItem = (Article) getArguments().getSerializable(ARG_ITEM_ID);
 
             Activity activity = this.getActivity();
-            if (activity!=null){
+            if (activity != null) {
                 CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
                 if (appBarLayout != null) {
                     appBarLayout.setTitle(mItem.getTitle());

@@ -18,14 +18,14 @@ public class SplashScreenActivityTest {
     }
 
     @Test
-    protected void onResume(){
+    protected void onResume() {
         //super.onResume();
         MainPresenter mainPresenter = new MainPresenter();
         mainPresenter.fetchAllArticles();
     }
 
     @Test
-    protected void onStop(){
+    protected void onStop() {
 
         //super.onStop();
     }

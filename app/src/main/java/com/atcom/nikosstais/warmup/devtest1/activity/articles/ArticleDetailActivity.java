@@ -21,17 +21,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -72,9 +63,16 @@ public class ArticleDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, ArticleListActivity.class));
+            Intent intent = getParentActivityIntent();
+            if (getIntent().getExtras() != null && getIntent().getExtras().get(getString(R.string.categoryIDSelected)) != null) {
+                Integer categoryId = (Integer) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
+                intent.putExtra(getString(R.string.categoryIDSelected), categoryId);
+            }
+
+            navigateUpTo(intent);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

@@ -3,15 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="6dip"
-    android:textAlignment="gravity"
-    >
+    android:textAlignment="gravity">
 
     <TextView
         android:id="@+id/id_text"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:textAppearance="?attr/textAppearanceListItem"
-        />
+        android:textAppearance="?attr/textAppearanceListItem" />
 
     <ImageView
         android:id="@+id/newsEntryImage"
@@ -28,10 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/newsEntryImage"
         android:gravity="center_vertical"
-        android:textSize="16sp"
         android:text="Title"
-        android:textStyle="bold"
-        />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/secondLine"

@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by nikos on 06/04/18.
  */
 
-public class Category  implements Serializable, Comparable {
+public class Category implements Serializable, Comparable {
 
     @SerializedName("order")
     private int order;
@@ -70,11 +70,11 @@ public class Category  implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        if (this.id == ((Category)o).id)
+        if (this.id == ((Category) o).id)
             return 0;
-        else if (this.id >((Category)o).id){
+        else if (this.id > ((Category) o).id) {
             return 1;
-        }else{
+        } else {
             return -1;
         }
     }
@@ -86,6 +86,6 @@ public class Category  implements Serializable, Comparable {
 
     @Override
     public boolean equals(Object obj) {
-        return this.id == ((Category)obj).id;
+        return this.id == ((Category) obj).id;
     }
 }

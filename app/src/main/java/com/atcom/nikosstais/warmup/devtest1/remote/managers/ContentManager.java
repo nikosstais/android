@@ -30,7 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nikos on 06/04/18.
  */
 
-public class ContentManager{
+public class ContentManager {
 
     private static final String TAG = ContentManager.class.toString();
     private static final String articleListUrl = "http://mobileapps.atcom.gr/services/protoThema/articlelist_gson.json";
@@ -39,20 +39,20 @@ public class ContentManager{
     public static List<Category> getCategories(Context ctx) {
 
         List<Category> allCategories = new ArrayList<>();
-        if (NetworkUtil.isNetworkAvailable(ctx)){
+        if (NetworkUtil.isNetworkAvailable(ctx)) {
             Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
             try {
                 CategoriesResponse mainResponse = categoriesCall.execute().body();
 
-                if (mainResponse!=null){
-                    addCategoriesToDB(mainResponse,ctx);
+                if (mainResponse != null) {
+                    addCategoriesToDB(mainResponse, ctx);
                     allCategories = mainResponse.getCategories();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             allCategories = getCategoriesFromDB(ctx);
         }
 
@@ -62,25 +62,24 @@ public class ContentManager{
         return filteredCategories;
     }
 
-    public static List<Article> getNewsArticles(Context ctx){
+    public static List<Article> getNewsArticles(Context ctx) {
 
         List<Article> allArticles = new ArrayList<>();
 
-        if (NetworkUtil.isNetworkAvailable(ctx)){
+        if (NetworkUtil.isNetworkAvailable(ctx)) {
             Call<NewsArticlesResponse> articlesCall = getProtoThemaService().getArticles();
             try {
                 NewsArticlesResponse mainResponse = articlesCall.execute().body();
 
-                if (mainResponse!=null){
-                    addArticleToDB(mainResponse,ctx);
+                if (mainResponse != null) {
+                    addArticleToDB(mainResponse, ctx);
                     allArticles = mainResponse.getArticles();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             allArticles = getArticlesFromDB(ctx);
         }
 
@@ -90,7 +89,7 @@ public class ContentManager{
 
     }
 
-    private static List<Article> getArticlesFromDB(Context ctx){
+    private static List<Article> getArticlesFromDB(Context ctx) {
         ArticleResponses articleResponses = AppDatabase.getDatabase(ctx)
                 .articleResponsesDao()
                 .getAllArticleResponses().get(0);
@@ -101,7 +100,7 @@ public class ContentManager{
         return savedResponse.getArticles();
     }
 
-    private static List<Category> getCategoriesFromDB(Context ctx){
+    private static List<Category> getCategoriesFromDB(Context ctx) {
         CategoryResponses response = AppDatabase.getDatabase(ctx)
                 .categoryResponsesDao()
                 .getAllCategoryResponses().get(0);
@@ -112,21 +111,23 @@ public class ContentManager{
         return savedResponse.getCategories();
     }
 
-    private static void addArticleToDB(NewsArticlesResponse newsArticlesResponse, Context ctx){
+    private static void addArticleToDB(NewsArticlesResponse newsArticlesResponse, Context ctx) {
         ArticleResponses responseToSave = new ArticleResponses();
         responseToSave.responseText = getGsonBuilder().toJson(newsArticlesResponse, NewsArticlesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
         AppDatabase.getDatabase(ctx).articleResponsesDao().addArticleResponses(responseToSave);
     }
-    private static void addCategoriesToDB(CategoriesResponse categoriesResponse, Context ctx){
+
+    private static void addCategoriesToDB(CategoriesResponse categoriesResponse, Context ctx) {
         CategoryResponses responseToSave = new CategoryResponses();
         responseToSave.responseText = getGsonBuilder().toJson(categoriesResponse, CategoriesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
         AppDatabase.getDatabase(ctx).categoryResponsesDao().addCategoryResponses(responseToSave);
     }
-    private static Gson getGsonBuilder(){
+
+    private static Gson getGsonBuilder() {
         return new GsonBuilder()
                 .setDateFormat("MMM dd yyyy")
                 .create();
@@ -142,13 +143,13 @@ public class ContentManager{
         return retrofit.create(ProtoThemaApiInterface.class);
     }
 
-    public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList){
+    public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
         List<Article> categoryArticles = new ArrayList<>();
         Category searchCategory = new Category();
         searchCategory.setId(categoryId);
 
         for (Article article : articleList) {
-            if (article.getCategoryList().contains(searchCategory)){
+            if (article.getCategoryList().contains(searchCategory)) {
                 categoryArticles.add(article);
             }
         }
@@ -156,26 +157,27 @@ public class ContentManager{
         return categoryArticles;
     }
 
-    private static List<Category> filterOutEmptyCategories(List<Category> allCategories, Context ctx){
+    private static List<Category> filterOutEmptyCategories(List<Category> allCategories, Context ctx) {
         List<Category> filteredCategories = new ArrayList<>();
         HashSet<Integer> existingCategories = new HashSet<>();
         List<Article> articles = getNewsArticles(ctx);
 
-        for (Article article : articles){
-            for (Category cat : article.getCategoryList()){
+        for (Article article : articles) {
+            for (Category cat : article.getCategoryList()) {
                 existingCategories.add(cat.getId());
             }
         }
 
-        for (Category cat : allCategories){
-            if (existingCategories.contains(cat.getId())){
+        for (Category cat : allCategories) {
+            if (existingCategories.contains(cat.getId())) {
                 filteredCategories.add(cat);
             }
         }
 
         return filteredCategories;
     }
-    public static class FetchNewsTask extends AsyncTask<Context,Void,List<Article>>{
+
+    public static class FetchNewsTask extends AsyncTask<Context, Void, List<Article>> {
 
         @Override
         protected List<Article> doInBackground(Context... contexts) {
@@ -185,7 +187,7 @@ public class ContentManager{
 
     }
 
-    public static class FetchCategoriesTask extends AsyncTask<Context, Void, List<Category>>{
+    public static class FetchCategoriesTask extends AsyncTask<Context, Void, List<Category>> {
 
         @Override
         protected List<Category> doInBackground(Context... contexts) {

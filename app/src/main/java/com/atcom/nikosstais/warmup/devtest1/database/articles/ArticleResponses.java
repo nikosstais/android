@@ -7,8 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity(tableName = "ArticleResponses",
         indices = {@Index(value = "dateInserted")}
 )
-public class ArticleResponses
-{
+public class ArticleResponses {
     @PrimaryKey(autoGenerate = true)
     public Long id;
     public String dateInserted;

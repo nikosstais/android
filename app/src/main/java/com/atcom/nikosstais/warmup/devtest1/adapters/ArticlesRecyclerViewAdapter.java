@@ -16,8 +16,7 @@ import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActiv
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivity;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -44,6 +43,12 @@ public class ArticlesRecyclerViewAdapter
                 Context context = view.getContext();
                 Intent intent = new Intent(context, ArticleDetailActivity.class);
                 intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, item);
+                if (mParentActivity.getIntent().getExtras() != null &&
+                        mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected)) != null) {
+                    Integer categoryId = (Integer) mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected));
+                    String categoryIdentifier = mParentActivity.getString(R.string.categoryIDSelected);
+                    intent.putExtra(categoryIdentifier, categoryId);
+                }
 
                 context.startActivity(intent);
             }
@@ -51,8 +56,8 @@ public class ArticlesRecyclerViewAdapter
     };
 
     public ArticlesRecyclerViewAdapter(ArticleListActivity parent,
-                                List<Article> items,
-                                boolean twoPane) {
+                                       List<Article> items,
+                                       boolean twoPane) {
         mValues = items;
         mParentActivity = parent;
         mTwoPane = twoPane;
@@ -74,18 +79,24 @@ public class ArticlesRecyclerViewAdapter
         holder.itemView.setTag(mValues.get(position));
         holder.itemView.setOnClickListener(mOnClickListener);
 
-        if (position%2==0){
+        if (position % 2 == 0) {
             holder.itemView.setBackgroundColor(Color.parseColor("cyan"));
-        }else{
+        } else {
             holder.itemView.setBackgroundColor(Color.parseColor("white"));
         }
 
-        Glide.with(holder.itemView.getContext())
+        Picasso.get()
                 .load(article.getPhotoUrl())
-                .dontAnimate()
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT )
+                .resize(holder.newsEntryImage.getMaxWidth(), holder.newsEntryImage.getMaxHeight())
+                .centerCrop()
                 .into(holder.newsEntryImage);
+
+//        Glide.with(holder.itemView.getContext())
+//                .load(article.getPhotoUrl())
+//                .dontAnimate()
+//                .fitCenter()
+//                .diskCacheStrategy(DiskCacheStrategy.RESULT )
+//                .into(holder.newsEntryImage);
     }
 
     @Override

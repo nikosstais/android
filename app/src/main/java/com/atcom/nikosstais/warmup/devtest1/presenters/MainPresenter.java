@@ -15,11 +15,11 @@ public class MainPresenter {
 
     private static final ContentManager contentManager = new ContentManager();
 
-    public List<Category> fetchCategoriesData(){
+    public List<Category> fetchCategoriesData() {
         return null;
     }
 
-    public List<Article> fetchAllArticles(){
+    public List<Article> fetchAllArticles() {
         return null;
     }
 

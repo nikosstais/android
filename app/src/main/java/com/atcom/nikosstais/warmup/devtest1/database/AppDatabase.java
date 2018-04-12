@@ -9,15 +9,13 @@ import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponses;
 import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponsesDao;
 import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoryResponses;
 import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoryResponsesDao;
-@Database(entities = {ArticleResponses.class,  CategoryResponses.class},
+
+@Database(entities = {ArticleResponses.class, CategoryResponses.class},
         version = 16,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
-
-    public abstract ArticleResponsesDao articleResponsesDao();
-    public abstract CategoryResponsesDao categoryResponsesDao();
 
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
@@ -37,4 +35,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public static void destroyInstance() {
         INSTANCE = null;
     }
+
+    public abstract ArticleResponsesDao articleResponsesDao();
+
+    public abstract CategoryResponsesDao categoryResponsesDao();
 }
