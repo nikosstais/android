@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 
 /**
  * An activity representing a single Article detail screen. This
@@ -24,10 +25,12 @@ public class ArticleDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
+        Article item = (Article) getIntent().getSerializableExtra(ArticleDetailFragment.ARG_ITEM_ID);
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(item.getTitle());
         }
 
         // savedInstanceState is non-null when there is fragment state
@@ -44,7 +47,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putSerializable(ArticleDetailFragment.ARG_ITEM_ID,
-                    getIntent().getSerializableExtra(ArticleDetailFragment.ARG_ITEM_ID));
+                    item);
             ArticleDetailFragment fragment = new ArticleDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

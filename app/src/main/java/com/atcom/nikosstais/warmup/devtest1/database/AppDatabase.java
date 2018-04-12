@@ -5,13 +5,13 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponses;
-import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponsesDao;
-import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoryResponses;
-import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoryResponsesDao;
+import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleCache;
+import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticlesCacheDao;
+import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoriesCache;
+import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoriesCacheDao;
 
-@Database(entities = {ArticleResponses.class, CategoryResponses.class},
-        version = 16,
+@Database(entities = {ArticleCache.class, CategoriesCache.class},
+        version = 1,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -36,7 +36,7 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = null;
     }
 
-    public abstract ArticleResponsesDao articleResponsesDao();
+    public abstract ArticlesCacheDao articlesCacheDao();
 
-    public abstract CategoryResponsesDao categoryResponsesDao();
+    public abstract CategoriesCacheDao categoriesCacheDao();
 }

@@ -2,7 +2,7 @@ package com.atcom.nikosstais.warmup.devtest1.presenters;
 
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.managers.ContentManager;
+import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MainPresenter {
 
-    private static final ContentManager contentManager = new ContentManager();
+    private static final ContentHelper CONTENT_MANAGER_HELPER = new ContentHelper();
 
     public List<Category> fetchCategoriesData() {
         return null;

@@ -15,9 +15,12 @@ import android.view.ViewGroup;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter;
+import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.CategoryNameTask;
+import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchCategoriesTask;
+import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchNewsTask;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.managers.ContentManager;
+import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,11 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
                 .getChildAt(0)
                 .setBackgroundColor(getResources().getColor(R.color.white));
 
+        if (getSupportActionBar() == null) {
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+
 //        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //        StrictMode.setThreadPolicy(policy);
 
@@ -65,7 +73,6 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
 
-
         Integer categoryId = null;
         if (getIntent() != null && getIntent().getExtras() != null) {
             categoryId = (Integer) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
@@ -74,6 +81,11 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         setupRecyclerView(categoryId);
 
         setupDrawer();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
 
     }
 
@@ -99,10 +111,11 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         navigationView.getMenu().clear();
         List<Category> categories = new ArrayList<>();
         try {
-            categories.addAll(new ContentManager.FetchCategoriesTask().execute(getApplicationContext()).get());
+            categories.addAll(new FetchCategoriesTask().execute(getApplicationContext()).get());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         Menu menu = navigationView.getMenu();
         for (Category cat : categories) {
@@ -121,14 +134,23 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
 
         List<Article> newsArticles = new ArrayList<>();
         try {
-            newsArticles.addAll(new ContentManager.FetchNewsTask().execute(getApplicationContext()).get());
+            newsArticles.addAll(new FetchNewsTask().execute(getApplicationContext()).get());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (categoryId != null) {
-            newsArticles = ContentManager.getNewsArticlesByCategory(categoryId, newsArticles);
+            newsArticles = ContentHelper.getNewsArticlesByCategory(categoryId, newsArticles);
             this.getIntent().putExtra(getString(R.string.categoryIDSelected), categoryId);
+
+            String appBarText = getString(R.string.app_name);
+            try {
+                CategoryNameTask task = new CategoryNameTask(categoryId);
+                appBarText = task.execute(getApplicationContext()).get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            getSupportActionBar().setTitle(appBarText);
         }
         recyclerView.setAdapter(
                 new ArticlesRecyclerViewAdapter(this,
@@ -160,16 +182,10 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         drawer.closeDrawer(GravityCompat.START);
 
         Integer categoryId = (Integer) item.getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-        if (getSupportActionBar() == null) {
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-        } else {
-            getSupportActionBar().setTitle(item.getIntent().getExtras().get(getString(R.string.categoryNameSelected)).toString());
-        }
+        getSupportActionBar().setTitle(item.getIntent().getExtras().get(getString(R.string.categoryNameSelected)).toString());
+
         setupRecyclerView(categoryId);
 
         return true;
     }
-
-
 }

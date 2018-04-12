@@ -73,7 +73,6 @@ public class ArticlesRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Article article = mValues.get(position);
-        holder.mIdView.setText(article.getId().toString());
         holder.newsEntryTitle.setText(article.getTitle());
         holder.newsEntrySummary.setText(article.getSummary());
         holder.itemView.setTag(mValues.get(position));
@@ -85,11 +84,16 @@ public class ArticlesRecyclerViewAdapter
             holder.itemView.setBackgroundColor(Color.parseColor("white"));
         }
 
-        Picasso.get()
-                .load(article.getPhotoUrl())
-                .resize(holder.newsEntryImage.getMaxWidth(), holder.newsEntryImage.getMaxHeight())
-                .centerCrop()
-                .into(holder.newsEntryImage);
+        try {
+            Picasso.with(holder.itemView.getContext())
+                    .load(article.getPhotoUrl())
+    //                .resize(holder.newsEntryImage.getMaxWidth(), holder.newsEntryImage.getMaxHeight())
+    //                .centerCrop()
+                    .fit()
+                    .into(holder.newsEntryImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 //        Glide.with(holder.itemView.getContext())
 //                .load(article.getPhotoUrl())
@@ -105,14 +109,12 @@ public class ArticlesRecyclerViewAdapter
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView mIdView;
         final TextView newsEntryTitle;
         final TextView newsEntrySummary;
         final ImageView newsEntryImage;
 
         ViewHolder(View view) {
             super(view);
-            mIdView = view.findViewById(R.id.id_text);
             newsEntryTitle = view.findViewById(R.id.firstLine);
             newsEntrySummary = view.findViewById(R.id.secondLine);
             newsEntryImage = view.findViewById(R.id.newsEntryImage);

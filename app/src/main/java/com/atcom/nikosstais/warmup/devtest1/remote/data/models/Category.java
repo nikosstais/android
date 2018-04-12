@@ -70,22 +70,11 @@ public class Category implements Serializable, Comparable {
 
     @Override
     public int compareTo(@NonNull Object o) {
-        if (this.id == ((Category) o).id)
-            return 0;
-        else if (this.id > ((Category) o).id) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id;
+        return Integer.compare(this.order,((Category) o).getOrder());
     }
 
     @Override
     public boolean equals(Object obj) {
-        return this.id == ((Category) obj).id;
+        return this.id == ((Category) obj).getId();
     }
 }

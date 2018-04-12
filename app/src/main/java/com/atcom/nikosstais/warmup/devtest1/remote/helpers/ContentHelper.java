@@ -1,11 +1,11 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.managers;
+package com.atcom.nikosstais.warmup.devtest1.remote.helpers;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
+import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
-import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleResponses;
-import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoryResponses;
+import com.atcom.nikosstais.warmup.devtest1.database.articles.ArticleCache;
+import com.atcom.nikosstais.warmup.devtest1.database.categories.CategoriesCache;
 import com.atcom.nikosstais.warmup.devtest1.remote.apis.ProtoThemaApiInterface;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoriesResponse;
@@ -17,8 +17,8 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -30,11 +30,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nikos on 06/04/18.
  */
 
-public class ContentManager {
+public class ContentHelper {
 
-    private static final String TAG = ContentManager.class.toString();
-    private static final String articleListUrl = "http://mobileapps.atcom.gr/services/protoThema/articlelist_gson.json";
-    private static final String categoryListUrl = "http://mobileapps.atcom.gr/services/protoThema/categories_gson.json";
+    private static final String TAG = ContentHelper.class.toString();
 
     public static List<Category> getCategories(Context ctx) {
 
@@ -56,8 +54,34 @@ public class ContentManager {
             allCategories = getCategoriesFromDB(ctx);
         }
 
+        return allCategories;
+    }
+
+    public static List<Category> getFilteredCategories(Context ctx) {
+
+        List<Category> allCategories = new ArrayList<>();
+        if (NetworkUtil.isNetworkAvailable(ctx)) {
+            Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
+            try {
+                CategoriesResponse mainResponse = categoriesCall.execute().body();
+
+                if (mainResponse != null) {
+                    addCategoriesToDB(mainResponse, ctx);
+                    allCategories = mainResponse.getCategories();
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            allCategories = getCategoriesFromDB(ctx);
+        }
+
+        Collections.sort(allCategories);
+        Category homeCategory = allCategories.get(0);
         List<Category> filteredCategories = filterOutEmptyCategories(allCategories, ctx);
-        Arrays.sort(filteredCategories.toArray());
+        filteredCategories.add(homeCategory);
+        Collections.sort(filteredCategories);
 
         return filteredCategories;
     }
@@ -83,48 +107,84 @@ public class ContentManager {
             allArticles = getArticlesFromDB(ctx);
         }
 
-        Arrays.sort(allArticles.toArray());
+        Collections.sort(allArticles);
 
         return allArticles;
 
     }
 
+    public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
+        if (categoryId==-1){
+            return articleList;
+        }
+        List<Article> categoryArticles = new ArrayList<>();
+        Category searchCategory = new Category();
+        searchCategory.setId(categoryId);
+
+        for (Article article : articleList) {
+            if (article.getCategoryList().contains(searchCategory)) {
+                categoryArticles.add(article);
+            }
+        }
+
+        return categoryArticles;
+    }
+
     private static List<Article> getArticlesFromDB(Context ctx) {
-        ArticleResponses articleResponses = AppDatabase.getDatabase(ctx)
-                .articleResponsesDao()
-                .getAllArticleResponses().get(0);
+        ArticleCache articleCache = AppDatabase.getDatabase(ctx)
+                .articlesCacheDao()
+                .getLatestArticlesFromCache().get(0);
 
         NewsArticlesResponse savedResponse = getGsonBuilder()
-                .fromJson(articleResponses.responseText, NewsArticlesResponse.class);
+                .fromJson(articleCache.responseText, NewsArticlesResponse.class);
 
         return savedResponse.getArticles();
     }
 
     private static List<Category> getCategoriesFromDB(Context ctx) {
-        CategoryResponses response = AppDatabase.getDatabase(ctx)
-                .categoryResponsesDao()
-                .getAllCategoryResponses().get(0);
+        CategoriesCache response = AppDatabase.getDatabase(ctx)
+                .categoriesCacheDao()
+                .getLatestCategoriesFromCache().get(0);
 
         CategoriesResponse savedResponse = getGsonBuilder()
                 .fromJson(response.responseText, CategoriesResponse.class);
 
         return savedResponse.getCategories();
     }
+    public static String getCategoryNameById(Context ctx, int categoryId) {
+        CategoriesCache response = AppDatabase.getDatabase(ctx)
+                .categoriesCacheDao()
+                .getLatestCategoriesFromCache().get(0);
+
+        CategoriesResponse savedResponse = getGsonBuilder()
+                .fromJson(response.responseText, CategoriesResponse.class);
+
+        Category criterion = new Category();
+        criterion.setId(categoryId);
+
+        int i = savedResponse.getCategories().indexOf(criterion);
+        if (i>-1){
+            return savedResponse.getCategories().get(i).getName();
+        }
+        return ctx.getApplicationContext().getResources().getString(R.string.app_name);
+    }
 
     private static void addArticleToDB(NewsArticlesResponse newsArticlesResponse, Context ctx) {
-        ArticleResponses responseToSave = new ArticleResponses();
+        ArticleCache responseToSave = new ArticleCache();
         responseToSave.responseText = getGsonBuilder().toJson(newsArticlesResponse, NewsArticlesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
-        AppDatabase.getDatabase(ctx).articleResponsesDao().addArticleResponses(responseToSave);
+        AppDatabase.getDatabase(ctx).articlesCacheDao().cleanArticlesCache();
+        AppDatabase.getDatabase(ctx).articlesCacheDao().addArticlesToCache(responseToSave);
     }
 
     private static void addCategoriesToDB(CategoriesResponse categoriesResponse, Context ctx) {
-        CategoryResponses responseToSave = new CategoryResponses();
+        CategoriesCache responseToSave = new CategoriesCache();
         responseToSave.responseText = getGsonBuilder().toJson(categoriesResponse, CategoriesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
-        AppDatabase.getDatabase(ctx).categoryResponsesDao().addCategoryResponses(responseToSave);
+        AppDatabase.getDatabase(ctx).categoriesCacheDao().cleanCategoriesCache();
+        AppDatabase.getDatabase(ctx).categoriesCacheDao().addCategoriesToCache(responseToSave);
     }
 
     private static Gson getGsonBuilder() {
@@ -141,20 +201,6 @@ public class ContentManager {
                 .build();
 
         return retrofit.create(ProtoThemaApiInterface.class);
-    }
-
-    public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
-        List<Article> categoryArticles = new ArrayList<>();
-        Category searchCategory = new Category();
-        searchCategory.setId(categoryId);
-
-        for (Article article : articleList) {
-            if (article.getCategoryList().contains(searchCategory)) {
-                categoryArticles.add(article);
-            }
-        }
-
-        return categoryArticles;
     }
 
     private static List<Category> filterOutEmptyCategories(List<Category> allCategories, Context ctx) {
@@ -175,24 +221,5 @@ public class ContentManager {
         }
 
         return filteredCategories;
-    }
-
-    public static class FetchNewsTask extends AsyncTask<Context, Void, List<Article>> {
-
-        @Override
-        protected List<Article> doInBackground(Context... contexts) {
-            return getNewsArticles(contexts[0]);
-        }
-
-
-    }
-
-    public static class FetchCategoriesTask extends AsyncTask<Context, Void, List<Category>> {
-
-        @Override
-        protected List<Category> doInBackground(Context... contexts) {
-            return getCategories(contexts[0]);
-        }
-
     }
 }
