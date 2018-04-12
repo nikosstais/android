@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 try {
-                    sleep(2000);
+                    sleep(3000);
                     Intent i = new Intent(MainActivity.this, ArticleListActivity.class);
                     startActivity(i);
                     finish();
