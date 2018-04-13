@@ -18,9 +18,9 @@ import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter
 import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.CategoryNameTask;
 import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchCategoriesTask;
 import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchNewsTask;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.tools;
+package com.atcom.nikosstais.warmup.devtest1.system.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.helpers;
+package com.atcom.nikosstais.warmup.devtest1.remote.data.helpers;
 
 import android.content.Context;
 
@@ -10,8 +10,9 @@ import com.atcom.nikosstais.warmup.devtest1.remote.apis.ProtoThemaApiInterface;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoriesResponse;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoryComparator;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.NewsArticlesResponse;
-import com.atcom.nikosstais.warmup.devtest1.remote.tools.NetworkUtil;
+import com.atcom.nikosstais.warmup.devtest1.system.network.NetworkUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -81,7 +82,7 @@ public class ContentHelper {
         Category homeCategory = allCategories.get(0);
         List<Category> filteredCategories = filterOutEmptyCategories(allCategories, ctx);
         filteredCategories.add(homeCategory);
-        Collections.sort(filteredCategories);
+        Collections.sort(filteredCategories,new CategoryComparator());
 
         return filteredCategories;
     }

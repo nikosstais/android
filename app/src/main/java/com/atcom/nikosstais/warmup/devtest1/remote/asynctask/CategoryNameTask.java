@@ -3,7 +3,7 @@ package com.atcom.nikosstais.warmup.devtest1.remote.asynctask;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 
 
 public class CategoryNameTask extends AsyncTask<Context, Void, String> {
