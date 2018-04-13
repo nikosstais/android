@@ -8,5 +8,7 @@
     <string name="title_article_detail">Article Detail</string>
     <string name="categoryIDSelected">categoryIDSelected</string>
     <string name="categoryNameSelected">categoryNameSelected</string>
+    <string name="characterEncoding">utf-8</string>
+    <string name="htmlMimeType">text/html; charset=utf-8</string>
 
 </resources>

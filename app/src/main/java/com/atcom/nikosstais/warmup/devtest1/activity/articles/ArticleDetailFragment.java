@@ -44,18 +44,18 @@ public class ArticleDetailFragment extends Fragment {
             try {
                 Picasso.with(rootView.getContext())
                         .load(mItem.getPhotoUrl())
-                        //.resize(rootView.getWidth(),0)
-                        //.onlyScaleDown()
                         .into((ImageView) rootView.findViewById(R.id.article_detail_image));
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            WebView viewById = rootView.findViewById(R.id.article_webview);
-            viewById.loadData(mItem.getContent().replaceAll("user-scalable=no", "user-scalable=yes"),
-                    "text/html",
-                    null);
-            viewById.getSettings().setJavaScriptEnabled(Boolean.TRUE);
+            WebView webView = rootView.findViewById(R.id.article_webview);
+            webView.getSettings().setDefaultTextEncodingName(getString(R.string.characterEncoding));
+
+            webView.loadData(mItem.getContent(),
+                    getString(R.string.htmlMimeType),
+                    getString(R.string.characterEncoding));
+            webView.getSettings().setJavaScriptEnabled(Boolean.TRUE);
 //            viewById.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
 //            viewById.getSettings().setLoadWithOverviewMode(true);
 //            viewById.getSettings().setUseWideViewPort(true);
