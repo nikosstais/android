@@ -1,6 +1,7 @@
 package com.atcom.nikosstais.warmup.devtest1.remote.helpers;
 
 import android.content.Context;
+import android.view.View;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
@@ -11,6 +12,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.CategoriesResponse;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.NewsArticlesResponse;
+import com.atcom.nikosstais.warmup.devtest1.system.AndroidTestApplication;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -20,7 +22,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -32,29 +40,45 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ContentHelper {
 
     private static final String TAG = ContentHelper.class.toString();
+    private static final ContentHelper INSTANCE = new ContentHelper();
 
-    public static List<Category> getCategories(Context ctx) {
+    private ContentHelper(){}
 
-        List<Category> allCategories = new ArrayList<>();
+    public static ContentHelper getInstance(){
 
-            Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
-            try {
-                CategoriesResponse mainResponse = categoriesCall.execute().body();
-
-                if (mainResponse != null) {
-                    addCategoriesToDB(mainResponse, ctx);
-                    allCategories = mainResponse.getCategories();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                allCategories = getCategoriesFromDB(ctx);
-            }
-
-        return allCategories;
+        return INSTANCE;
     }
 
-    public static List<Category> getFilteredCategories(Context ctx) {
+    public Single<List<Category>> getCategories() {
+
+        return
+                Single.fromCallable(
+                    new Callable<List<Category>>() {
+                       @Override
+                       public List<Category> call() throws Exception {
+                           List<Category> allCategories = new ArrayList<>();
+
+                           Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
+                           try {
+                               CategoriesResponse mainResponse = categoriesCall.execute().body();
+
+                               if (mainResponse != null) {
+                                   addCategoriesToDB(mainResponse);
+                                   allCategories = mainResponse.getCategories();
+                               }
+
+                           } catch (Exception e) {
+                               e.printStackTrace();
+                               allCategories = getCategoriesFromDB();
+                           }
+
+                           return allCategories;
+                       }
+                   } );
+
+    }
+
+    public List<Category> getFilteredCategories() {
 
         List<Category> allCategories = new ArrayList<>();
 
@@ -63,13 +87,13 @@ public class ContentHelper {
                 CategoriesResponse mainResponse = categoriesCall.execute().body();
 
                 if (mainResponse != null) {
-                    addCategoriesToDB(mainResponse, ctx);
+                    addCategoriesToDB(mainResponse);
                     allCategories = mainResponse.getCategories();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-                allCategories = getCategoriesFromDB(ctx);
+                allCategories = getCategoriesFromDB();
             }
 
         if (allCategories.isEmpty()){
@@ -80,7 +104,7 @@ public class ContentHelper {
 
         Category homeCategory = allCategories.get(0);
 
-        List<Category> filteredCategories = filterOutEmptyCategories(allCategories, ctx);
+        List<Category> filteredCategories = filterOutEmptyCategories(allCategories);
 
         filteredCategories.add(homeCategory);
 
@@ -89,7 +113,15 @@ public class ContentHelper {
         return filteredCategories;
     }
 
-    public static List<Article> getNewsArticles(Context ctx) {
+    public Single<List<Article>> getNews() {
+        return Single.fromCallable(new Callable<List<Article>>() {
+            @Override
+            public List<Article> call() throws Exception {
+                return getNewsArticles();
+            }
+        });
+    }
+    public List<Article> getNewsArticles() {
 
         List<Article> allArticles = new ArrayList<>();
 
@@ -99,13 +131,13 @@ public class ContentHelper {
             NewsArticlesResponse mainResponse = articlesCall.execute().body();
 
             if (mainResponse != null) {
-                addArticleToDB(mainResponse, ctx);
+                addArticleToDB(mainResponse);
                 allArticles = mainResponse.getArticles();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            allArticles = getArticlesFromDB(ctx);
+            allArticles = getArticlesFromDB();
         }
 
         Collections.sort(allArticles);
@@ -114,7 +146,7 @@ public class ContentHelper {
 
     }
 
-    public static List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
+    private List<Article> getNewsArticlesByCategory(int categoryId, List<Article> articleList) {
         if (categoryId == -1){
             return articleList;
         }
@@ -131,8 +163,8 @@ public class ContentHelper {
         return categoryArticles;
     }
 
-    private static List<Article> getArticlesFromDB(Context ctx) {
-        List<ArticleCache> articleCacheList = AppDatabase.getDatabase(ctx)
+    private List<Article> getArticlesFromDB() {
+        List<ArticleCache> articleCacheList = AppDatabase.getDatabase()
                 .articlesCacheDao()
                 .getLatestArticlesFromCache();
 
@@ -148,8 +180,8 @@ public class ContentHelper {
         return savedResponse.getArticles();
     }
 
-    private static List<Category> getCategoriesFromDB(Context ctx) {
-        CategoriesCache response = AppDatabase.getDatabase(ctx)
+    private List<Category> getCategoriesFromDB() {
+        CategoriesCache response = AppDatabase.getDatabase()
                 .categoriesCacheDao()
                 .getLatestCategoriesFromCache().get(0);
 
@@ -158,8 +190,8 @@ public class ContentHelper {
 
         return savedResponse.getCategories();
     }
-    public static String getCategoryNameById(Context ctx, int categoryId) {
-        CategoriesCache response = AppDatabase.getDatabase(ctx)
+    public String getCategoryNameById(int categoryId) {
+        CategoriesCache response = AppDatabase.getDatabase()
                 .categoriesCacheDao()
                 .getLatestCategoriesFromCache().get(0);
 
@@ -173,34 +205,34 @@ public class ContentHelper {
         if (i>-1){
             return savedResponse.getCategories().get(i).getName();
         }
-        return ctx.getApplicationContext().getResources().getString(R.string.app_name);
+        return AndroidTestApplication.getInstance().getString(R.string.app_name);
     }
 
-    private static void addArticleToDB(NewsArticlesResponse newsArticlesResponse, Context ctx) {
+    private void addArticleToDB(NewsArticlesResponse newsArticlesResponse) {
         ArticleCache responseToSave = new ArticleCache();
         responseToSave.responseText = getGsonBuilder().toJson(newsArticlesResponse, NewsArticlesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
-        AppDatabase.getDatabase(ctx).articlesCacheDao().cleanArticlesCache();
-        AppDatabase.getDatabase(ctx).articlesCacheDao().addArticlesToCache(responseToSave);
+        AppDatabase.getDatabase().articlesCacheDao().cleanArticlesCache();
+        AppDatabase.getDatabase().articlesCacheDao().addArticlesToCache(responseToSave);
     }
 
-    private static void addCategoriesToDB(CategoriesResponse categoriesResponse, Context ctx) {
+    private void addCategoriesToDB(CategoriesResponse categoriesResponse) {
         CategoriesCache responseToSave = new CategoriesCache();
         responseToSave.responseText = getGsonBuilder().toJson(categoriesResponse, CategoriesResponse.class);
         responseToSave.dateInserted = Calendar.getInstance().getTime().toString();
 
-        AppDatabase.getDatabase(ctx).categoriesCacheDao().cleanCategoriesCache();
-        AppDatabase.getDatabase(ctx).categoriesCacheDao().addCategoriesToCache(responseToSave);
+        AppDatabase.getDatabase().categoriesCacheDao().cleanCategoriesCache();
+        AppDatabase.getDatabase().categoriesCacheDao().addCategoriesToCache(responseToSave);
     }
 
-    private static Gson getGsonBuilder() {
+    private Gson getGsonBuilder() {
         return new GsonBuilder()
                 .setDateFormat("MMM dd yyyy")
                 .create();
     }
 
-    private static ProtoThemaApiInterface getProtoThemaService() {
+    private ProtoThemaApiInterface getProtoThemaService() {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ProtoThemaApiInterface.BASE_URL)
@@ -210,10 +242,10 @@ public class ContentHelper {
         return retrofit.create(ProtoThemaApiInterface.class);
     }
 
-    private static List<Category> filterOutEmptyCategories(List<Category> allCategories, Context ctx) {
+    private List<Category> filterOutEmptyCategories(List<Category> allCategories) {
         List<Category> filteredCategories = new ArrayList<>();
         HashSet<Integer> existingCategories = new HashSet<>();
-        List<Article> articles = getNewsArticles(ctx);
+        List<Article> articles = getNewsArticles();
 
         for (Article article : articles) {
             for (Category cat : article.getCategoryList()) {

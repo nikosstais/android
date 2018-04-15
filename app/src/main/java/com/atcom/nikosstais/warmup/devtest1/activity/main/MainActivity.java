@@ -4,16 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivity;
-import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
-import com.atcom.nikosstais.warmup.devtest1.presenters.MainPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchNewsTask;
-import com.atcom.nikosstais.warmup.devtest1.system.network.ConnectivityReceiver;
 
 import static java.lang.Thread.sleep;
 
@@ -40,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 try {
-                    final Context ctx = getApplicationContext();
-                    boolean notStoredDataFound = new FetchNewsTask().execute(ctx).get().isEmpty();
+                    boolean notStoredDataFound = new FetchNewsTask().execute().get().isEmpty();
 
                     if (notStoredDataFound) {
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);

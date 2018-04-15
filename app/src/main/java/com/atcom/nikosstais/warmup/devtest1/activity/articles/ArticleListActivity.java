@@ -1,5 +1,6 @@
 package com.atcom.nikosstais.warmup.devtest1.activity.articles;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,15 +16,14 @@ import android.view.ViewGroup;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter;
-import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.CategoryNameTask;
-import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchCategoriesTask;
-import com.atcom.nikosstais.warmup.devtest1.remote.asynctask.FetchNewsTask;
+import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleListPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * An activity representing a list of Articles. This activity
@@ -33,7 +33,9 @@ import java.util.List;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class ArticleListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ArticleListActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    ArticleListActivityView {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -41,6 +43,7 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
      */
     private boolean mTwoPane;
     private RecyclerView recyclerView;
+    private ArticleListPresenter presenter;
 
 
     @Override
@@ -70,22 +73,20 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
             mTwoPane = true;
         }
 
-        recyclerView = findViewById(R.id.article_list);
-        assert recyclerView != null;
 
-        Integer categoryId = null;
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            categoryId = (Integer) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-        }
-
-        setupRecyclerView(categoryId);
+        presenter = new ArticleListPresenter(this, AndroidSchedulers.mainThread());
 
         setupDrawer();
+        setupRecyclerView(null, Collections.<Article>emptyList());
+
     }
 
     @Override
     public void onResume(){
         super.onResume();
+
+        presenter.loadNews();
+        presenter.loadCategories();
 
     }
 
@@ -101,62 +102,47 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        PrepareNavigationMenu(navigationView);
     }
 
-    private void PrepareNavigationMenu(NavigationView navigationView) {
+    @Override
+    public void prepareNavigationMenu(List<Category> categories) {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().clear();
-        List<Category> categories = new ArrayList<>();
-        try {
-            categories.addAll(new FetchCategoriesTask().execute(getApplicationContext()).get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
 
         Menu menu = navigationView.getMenu();
         for (Category cat : categories) {
             MenuItem menuItem = menu.add(cat.getId() + "");
+            menuItem.setTitle(cat.getName());
 
             Intent intent = new Intent(this.getApplicationContext(), ArticleListActivity.class);
-            intent.putExtra(getString(R.string.categoryIDSelected), cat.getId());
-            intent.putExtra(getString(R.string.categoryNameSelected), cat.getName());
+            intent.putExtra(getString(R.string.categoryIDSelected), cat);
 
-            menuItem.setTitle(cat.getName());
             menuItem.setIntent(intent);
         }
     }
 
-    private void setupRecyclerView(Integer categoryId) {
+    private void setupRecyclerView(Category category, List<Article> newsArticles) {
 
-        List<Article> newsArticles = new ArrayList<>();
-        try {
-            newsArticles.addAll(new FetchNewsTask().execute(getApplicationContext()).get());
-        } catch (Exception e) {
-            e.printStackTrace();
+        recyclerView = findViewById(R.id.article_list);
+        assert recyclerView != null;
+
+        if (category != null) {
+            getSupportActionBar().setTitle(category.getName());
         }
+//        if (recyclerView.getAdapter()==null){
+            recyclerView.setAdapter(
+                    new ArticlesRecyclerViewAdapter(this,
+                            newsArticles,
+                            mTwoPane));
+//        }
+//        else{
+//            recyclerView.getAdapter().
+//            recyclerView.getAdapter().notifyDataSetChanged();
+//            recyclerView.refreshDrawableState();
+//
+//        }
 
-        if (categoryId != null) {
-            newsArticles = ContentHelper.getNewsArticlesByCategory(categoryId, newsArticles);
-            this.getIntent().putExtra(getString(R.string.categoryIDSelected), categoryId);
-
-            String appBarText = getString(R.string.app_name);
-            try {
-                CategoryNameTask task = new CategoryNameTask(categoryId);
-                appBarText = task.execute(getApplicationContext()).get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            getSupportActionBar().setTitle(appBarText);
-        }
-        recyclerView.setAdapter(
-                new ArticlesRecyclerViewAdapter(this,
-                        newsArticles,
-                        mTwoPane));
-        recyclerView.refreshDrawableState();
     }
 
     @Override
@@ -181,11 +167,26 @@ public class ArticleListActivity extends AppCompatActivity implements Navigation
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
-        Integer categoryId = (Integer) item.getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-        getSupportActionBar().setTitle(item.getIntent().getExtras().get(getString(R.string.categoryNameSelected)).toString());
+        Category categoryId = (Category) item.getIntent().getExtras().get(getString(R.string.categoryIDSelected));
 
-        setupRecyclerView(categoryId);
+        presenter.loadCategoryNews(categoryId);
 
         return true;
     }
+
+    @Override
+    public void displayNews(List<Article> articles) {
+        Category category = null;
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
+        }
+        setupRecyclerView(category, articles);
+
+    }
+
+    @Override
+    public void displayNoNews() {
+        //TODO show dialog and exit
+    }
+
 }

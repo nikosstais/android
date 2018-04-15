@@ -1,12 +1,11 @@
 package com.atcom.nikosstais.warmup.devtest1.remote.asynctask;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
-
-public class CategoryNameTask extends AsyncTask<Context, Void, String> {
+@Deprecated
+public class CategoryNameTask extends AsyncTask<Void, Void, String> {
 
     private Integer categoryId;
 
@@ -15,7 +14,7 @@ public class CategoryNameTask extends AsyncTask<Context, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Context... params) {
-        return ContentHelper.getCategoryNameById(params[0], categoryId);
+    protected String doInBackground(Void... params) {
+        return ContentHelper.getInstance().getCategoryNameById(categoryId);
     }
 }

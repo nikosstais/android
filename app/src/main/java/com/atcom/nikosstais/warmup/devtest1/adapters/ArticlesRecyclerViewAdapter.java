@@ -16,6 +16,7 @@ import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActiv
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivity;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -45,9 +46,9 @@ public class ArticlesRecyclerViewAdapter
                 intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, item);
                 if (mParentActivity.getIntent().getExtras() != null &&
                         mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected)) != null) {
-                    Integer categoryId = (Integer) mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected));
+                    Category category = (Category) mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected));
                     String categoryIdentifier = mParentActivity.getString(R.string.categoryIDSelected);
-                    intent.putExtra(categoryIdentifier, categoryId);
+                    intent.putExtra(categoryIdentifier, category);
                 }
 
                 context.startActivity(intent);
