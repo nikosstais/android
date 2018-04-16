@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActivityView;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleDetailPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;

@@ -1,7 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.remote.helpers;
-
-import android.content.Context;
-import android.view.View;
+package com.atcom.nikosstais.warmup.devtest1.remote.data.helpers;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
@@ -24,11 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

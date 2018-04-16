@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 
+
 @Deprecated
 class CategoryNameTask extends AsyncTask<Void, Void, String> {
 

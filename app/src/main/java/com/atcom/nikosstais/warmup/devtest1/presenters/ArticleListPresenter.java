@@ -3,18 +3,15 @@ package com.atcom.nikosstais.warmup.devtest1.presenters;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivityView;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.SingleSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
