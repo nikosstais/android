@@ -22,6 +22,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
  */
 public class ArticleDetailActivity extends AppCompatActivity implements ArticleDetailActivityView {
 
+    ArticleDetailPresenter presenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +37,8 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(item.getTitle());
         }
-
-        ArticleDetailPresenter presenter = new ArticleDetailPresenter(this);
+        //over-acting with mvp?
+        presenter = new ArticleDetailPresenter(this);
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -68,7 +69,9 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
             Intent intent = getParentActivityIntent();
             if (getIntent().getExtras() != null && getIntent().getExtras().get(getString(R.string.categoryIDSelected)) != null) {
                 Category category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-                intent.putExtra(getString(R.string.categoryIDSelected), category);
+                if (intent!=null){
+                    intent.putExtra(getString(R.string.categoryIDSelected), category);
+                }
             }
 
             navigateUpTo(intent);
