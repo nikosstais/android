@@ -8,9 +8,13 @@ import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.SingleSource;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -75,12 +79,15 @@ public class ArticleListPresenter {
         );
     }
 
-    public void loadCategoryNews(final Category category) {
+    public void loadCategoryNews(@NonNull final Category category) {
         mCompositeDisposable
                 .add(ContentHelper.getInstance().getNews()
                         .map(new Function<List<Article>, List<Article>>() {
                             @Override
                             public List<Article> apply(List<Article> articles) throws Exception {
+                                if (category.getId() == -1){
+                                    return articles;
+                                }
                                 List<Article> filteredList = new ArrayList<>();
                                 for (Article article: articles) {
                                     if (article.getCategoryList().contains(category)){

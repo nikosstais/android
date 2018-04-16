@@ -1,6 +1,6 @@
 package com.atcom.nikosstais.warmup.devtest1.system;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
 import com.atcom.nikosstais.warmup.devtest1.system.network.ConnectivityReceiver;
@@ -9,7 +9,7 @@ import com.atcom.nikosstais.warmup.devtest1.system.network.ConnectivityReceiver;
  * Created by nikos on 12/04/18.
  */
 
-public class AndroidTestApplication extends Application {
+public class AndroidTestApplication extends MultiDexApplication {
     private static AndroidTestApplication mInstance;
 
     @Override

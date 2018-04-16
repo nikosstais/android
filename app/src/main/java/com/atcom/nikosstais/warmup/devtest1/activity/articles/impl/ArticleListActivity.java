@@ -168,9 +168,9 @@ public class ArticleListActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
-        Category categoryId = (Category) item.getIntent().getExtras().get(getString(R.string.categoryIDSelected));
+        Category category = (Category) item.getIntent().getExtras().get(getString(R.string.categoryIDSelected));
 
-        presenter.loadCategoryNews(categoryId);
+        presenter.loadCategoryNews(category);
 
         return true;
     }

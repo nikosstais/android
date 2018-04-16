@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Intent i = new Intent(MainActivity.this, ArticleListActivity.class);
                     startActivity(i);
-                    sleep(1000);
+                    sleep(3000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
