@@ -1,9 +1,9 @@
-package com.atcom.nikosstais.warmup.devtest1.activity.articles;
+package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivityView;
 import com.atcom.nikosstais.warmup.devtest1.adapters.ArticlesRecyclerViewAdapter;
 import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleListPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
@@ -35,7 +36,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  */
 public class ArticleListActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    ArticleListActivityView {
+        ArticleListActivityView {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -186,7 +187,15 @@ public class ArticleListActivity extends AppCompatActivity
 
     @Override
     public void displayNoNews() {
-        //TODO show dialog and exit
+        Snackbar.make(this.getCurrentFocus(),
+                "Sorry no news here",
+                Snackbar.LENGTH_INDEFINITE);
+
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        presenter.unsubscribe();
+    }
 }

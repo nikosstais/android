@@ -12,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
-import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActivity;
-import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment;
-import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivity;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleDetailActivity;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleDetailFragment;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleListActivity;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.squareup.picasso.Picasso;

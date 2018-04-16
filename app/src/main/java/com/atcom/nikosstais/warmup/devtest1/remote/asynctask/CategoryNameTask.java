@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 
 @Deprecated
-public class CategoryNameTask extends AsyncTask<Void, Void, String> {
+class CategoryNameTask extends AsyncTask<Void, Void, String> {
 
     private Integer categoryId;
 

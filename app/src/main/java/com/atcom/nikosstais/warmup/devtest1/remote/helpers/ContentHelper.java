@@ -78,39 +78,46 @@ public class ContentHelper {
 
     }
 
-    public List<Category> getFilteredCategories() {
+    public Single<List<Category>> getFilteredCategories() {
 
-        List<Category> allCategories = new ArrayList<>();
+        return
+        Single.fromCallable(new Callable<List<Category>>() {
 
-            Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
-            try {
-                CategoriesResponse mainResponse = categoriesCall.execute().body();
+            @Override
+            public List<Category> call() throws Exception {
+                List<Category> allCategories = new ArrayList<>();
 
-                if (mainResponse != null) {
-                    addCategoriesToDB(mainResponse);
-                    allCategories = mainResponse.getCategories();
+                Call<CategoriesResponse> categoriesCall = getProtoThemaService().getCategories();
+                try {
+                    CategoriesResponse mainResponse = categoriesCall.execute().body();
+
+                    if (mainResponse != null) {
+                        addCategoriesToDB(mainResponse);
+                        allCategories = mainResponse.getCategories();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    allCategories = getCategoriesFromDB();
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                allCategories = getCategoriesFromDB();
+                if (allCategories.isEmpty()){
+                    return allCategories;
+                }
+
+                Collections.sort(allCategories);
+
+                Category homeCategory = allCategories.get(0);
+
+                List<Category> filteredCategories = filterOutEmptyCategories(allCategories);
+
+                filteredCategories.add(homeCategory);
+
+                Collections.sort(filteredCategories);
+
+                return filteredCategories;
             }
-
-        if (allCategories.isEmpty()){
-            return allCategories;
-        }
-
-        Collections.sort(allCategories);
-
-        Category homeCategory = allCategories.get(0);
-
-        List<Category> filteredCategories = filterOutEmptyCategories(allCategories);
-
-        filteredCategories.add(homeCategory);
-
-        Collections.sort(filteredCategories);
-
-        return filteredCategories;
+        });
     }
 
     public Single<List<Article>> getNews() {

@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.activity.articles;
+package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
+import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActivityView;
+import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleDetailPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 
 /**
  * An activity representing a single Article detail screen. This
@@ -16,7 +19,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
  * item details are presented side-by-side with a list of items
  * in a {@link ArticleListActivity}.
  */
-public class ArticleDetailActivity extends AppCompatActivity {
+public class ArticleDetailActivity extends AppCompatActivity implements ArticleDetailActivityView {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             actionBar.setTitle(item.getTitle());
         }
 
+        ArticleDetailPresenter presenter = new ArticleDetailPresenter(this);
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
         // (e.g. when rotating the screen from portrait to landscape).
@@ -45,14 +49,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putSerializable(ArticleDetailFragment.ARG_ITEM_ID,
-                    item);
-            ArticleDetailFragment fragment = new ArticleDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.article_detail_container, fragment)
-                    .commit();
+            presenter.showDetailedArticle(item);
+
         }
     }
 
@@ -68,8 +66,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
             //
             Intent intent = getParentActivityIntent();
             if (getIntent().getExtras() != null && getIntent().getExtras().get(getString(R.string.categoryIDSelected)) != null) {
-                Integer categoryId = (Integer) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-                intent.putExtra(getString(R.string.categoryIDSelected), categoryId);
+                Category category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
+                intent.putExtra(getString(R.string.categoryIDSelected), category);
             }
 
             navigateUpTo(intent);
@@ -77,5 +75,19 @@ public class ArticleDetailActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void displayArticle(Article article) {
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(ArticleDetailFragment.ARG_ITEM_ID, article);
+
+        ArticleDetailFragment fragment = new ArticleDetailFragment();
+        fragment.setArguments(arguments);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.article_detail_container, fragment)
+                .commit();
     }
 }

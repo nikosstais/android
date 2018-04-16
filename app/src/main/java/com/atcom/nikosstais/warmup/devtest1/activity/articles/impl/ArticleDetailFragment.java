@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.activity.articles;
+package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,11 +42,11 @@ public class ArticleDetailFragment extends Fragment {
 
         if (mItem != null) {
             try {
+
+                ImageView imageView = rootView.findViewById(R.id.article_detail_image);
                 Picasso.with(rootView.getContext())
                         .load(mItem.getPhotoUrl())
-                        //.resize(rootView.getWidth(),0)
-                        //.onlyScaleDown()
-                        .into((ImageView) rootView.findViewById(R.id.article_detail_image));
+                        .into(imageView);
             } catch (Exception e) {
                 e.printStackTrace();
             }

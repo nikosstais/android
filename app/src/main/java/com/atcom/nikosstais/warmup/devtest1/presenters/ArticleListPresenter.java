@@ -1,7 +1,5 @@
 package com.atcom.nikosstais.warmup.devtest1.presenters;
 
-import android.view.View;
-
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivityView;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
@@ -10,14 +8,9 @@ import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.SingleTransformer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -62,7 +55,7 @@ public class ArticleListPresenter {
     }
 
     public void loadCategories(){
-        mCompositeDisposable.add(ContentHelper.getInstance().getCategories()
+        mCompositeDisposable.add(ContentHelper.getInstance().getFilteredCategories()
                 .subscribeOn(Schedulers.io())
                 .observeOn(mMainScheduler)
                 .subscribeWith(new DisposableSingleObserver<List<Category>>() {
@@ -116,5 +109,9 @@ public class ArticleListPresenter {
                             }
                         }));
 
+    }
+
+    public void unsubscribe(){
+        mCompositeDisposable.clear();
     }
 }

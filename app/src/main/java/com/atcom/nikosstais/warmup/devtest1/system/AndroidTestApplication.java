@@ -2,6 +2,7 @@ package com.atcom.nikosstais.warmup.devtest1.system;
 
 import android.app.Application;
 
+import com.atcom.nikosstais.warmup.devtest1.database.AppDatabase;
 import com.atcom.nikosstais.warmup.devtest1.system.network.ConnectivityReceiver;
 
 /**
@@ -24,5 +25,11 @@ public class AndroidTestApplication extends Application {
 
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
         ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        AppDatabase.destroyInstance();
     }
 }

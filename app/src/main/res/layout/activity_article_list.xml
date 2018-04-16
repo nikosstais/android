@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            tools:context="com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivity"
+            tools:context="com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleListActivity"
             tools:listitem="@layout/article_list_content" />
     </LinearLayout>
 

@@ -8,7 +8,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.helpers.ContentHelper;
 import java.util.List;
 
 @Deprecated
-public class FetchNewsTask extends AsyncTask<Void, Void, List<Article>> {
+class FetchNewsTask extends AsyncTask<Void, Void, List<Article>> {
 
     @Override
     protected List<Article> doInBackground(Void... contexts) {
