@@ -88,9 +88,6 @@ public class ArticlesRecyclerViewAdapter
         try {
             Picasso.with(holder.itemView.getContext())
                     .load(article.getPhotoUrl())
-    //                .resize(holder.newsEntryImage.getMaxWidth(), holder.newsEntryImage.getMaxHeight())
-    //                .centerCrop()
-                    .fit()
                     .into(holder.newsEntryImage);
         } catch (Exception e) {
             e.printStackTrace();
