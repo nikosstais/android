@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActivityView;
+import com.atcom.nikosstais.warmup.devtest1.fragments.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleDetailPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
@@ -84,6 +85,9 @@ public class ArticleDetailActivity extends AppCompatActivity implements ArticleD
     public void displayArticle(Article article) {
         Bundle arguments = new Bundle();
         arguments.putSerializable(ArticleDetailFragment.ARG_ITEM_ID, article);
+
+        Category category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
+        arguments.putSerializable(getString(R.string.categoryIDSelected), category);
 
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);

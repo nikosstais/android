@@ -17,6 +17,7 @@ public class AndroidTestApplication extends MultiDexApplication {
         super.onCreate();
 
         mInstance = this;
+        AppDatabase.getDatabase();
     }
 
     public static synchronized AndroidTestApplication getInstance() {

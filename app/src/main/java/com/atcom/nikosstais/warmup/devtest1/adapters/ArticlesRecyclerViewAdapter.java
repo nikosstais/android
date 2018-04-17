@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleDetailActivity;
-import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleListActivity;
+import com.atcom.nikosstais.warmup.devtest1.fragments.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
 import com.squareup.picasso.Picasso;
@@ -27,6 +27,8 @@ public class ArticlesRecyclerViewAdapter
     private final ArticleListActivity mParentActivity;
     private final List<Article> mValues;
     private final boolean mTwoPane;
+    private Category mCategory;
+
 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -44,11 +46,9 @@ public class ArticlesRecyclerViewAdapter
                 Context context = view.getContext();
                 Intent intent = new Intent(context, ArticleDetailActivity.class);
                 intent.putExtra(ArticleDetailFragment.ARG_ITEM_ID, item);
-                if (mParentActivity.getIntent().getExtras() != null &&
-                        mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected)) != null) {
-                    Category category = (Category) mParentActivity.getIntent().getExtras().get(mParentActivity.getString(R.string.categoryIDSelected));
+                if (mCategory != null) {
                     String categoryIdentifier = mParentActivity.getString(R.string.categoryIDSelected);
-                    intent.putExtra(categoryIdentifier, category);
+                    intent.putExtra(categoryIdentifier, mCategory);
                 }
 
                 context.startActivity(intent);
@@ -58,10 +58,12 @@ public class ArticlesRecyclerViewAdapter
 
     public ArticlesRecyclerViewAdapter(ArticleListActivity parent,
                                        List<Article> items,
-                                       boolean twoPane) {
+                                       boolean twoPane,
+                                       Category category) {
         mValues = items;
         mParentActivity = parent;
         mTwoPane = twoPane;
+        mCategory = category;
     }
 
     @Override

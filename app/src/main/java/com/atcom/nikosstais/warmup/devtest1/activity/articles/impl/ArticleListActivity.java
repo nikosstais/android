@@ -79,7 +79,13 @@ public class ArticleListActivity extends AppCompatActivity
         presenter = new ArticleListPresenter(this, AndroidSchedulers.mainThread());
 
         setupDrawer();
-        setupRecyclerView(null, Collections.<Article>emptyList());
+
+        Category category = null;
+        if (getIntent() != null  && getIntent().getExtras() != null ){
+            category = (Category) getIntent().getExtras().getSerializable(getString(R.string.categoryIDSelected));
+        }
+
+        setupRecyclerView(category, Collections.<Article>emptyList());
 
     }
 
@@ -136,7 +142,8 @@ public class ArticleListActivity extends AppCompatActivity
             recyclerView.setAdapter(
                     new ArticlesRecyclerViewAdapter(this,
                             newsArticles,
-                            mTwoPane));
+                            mTwoPane,
+                            category));
 //        }
 //        else{
 //            recyclerView.getAdapter().
@@ -178,11 +185,6 @@ public class ArticleListActivity extends AppCompatActivity
 
     @Override
     public void displayNews(List<Article> articles,Category category ) {
-
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
-        }
-
         setupRecyclerView(category, articles);
     }
 

@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
+package com.atcom.nikosstais.warmup.devtest1.fragments.articles;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
