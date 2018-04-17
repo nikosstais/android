@@ -1,9 +1,9 @@
 package com.atcom.nikosstais.warmup.devtest1.presenters;
 
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivityView;
+import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
-import com.atcom.nikosstais.warmup.devtest1.remote.data.helpers.ContentHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class ArticleListPresenter {
                                 if (articles.isEmpty()) {
                                     mView.displayNoNews();
                                 } else {
-                                    mView.displayNews(articles);
+                                    mView.displayNews(articles, null);
                                 }
                             }
 
@@ -102,7 +102,7 @@ public class ArticleListPresenter {
                                 if (articles.isEmpty()) {
                                     mView.displayNoNews();
                                 } else {
-                                    mView.displayNews(articles);
+                                    mView.displayNews(articles, category);
                                 }
                             }
 

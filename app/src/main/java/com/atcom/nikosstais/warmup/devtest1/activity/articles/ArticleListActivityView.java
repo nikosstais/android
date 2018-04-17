@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 public interface ArticleListActivityView {
-    void displayNews(List<Article> articles);
+    void displayNews(List<Article> articles, Category category);
     void displayNoNews();
     void prepareNavigationMenu(List<Category> categories);
 }

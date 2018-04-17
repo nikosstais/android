@@ -176,13 +176,13 @@ public class ArticleListActivity extends AppCompatActivity
     }
 
     @Override
-    public void displayNews(List<Article> articles) {
-        Category category = null;
+    public void displayNews(List<Article> articles,Category category ) {
+
         if (getIntent() != null && getIntent().getExtras() != null) {
             category = (Category) getIntent().getExtras().get(getString(R.string.categoryIDSelected));
         }
-        setupRecyclerView(category, articles);
 
+        setupRecyclerView(category, articles);
     }
 
     @Override
