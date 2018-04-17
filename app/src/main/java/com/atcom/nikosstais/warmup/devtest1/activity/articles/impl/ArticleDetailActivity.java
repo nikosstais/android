@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailActivityView;
-import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleDetailFragment;
 import com.atcom.nikosstais.warmup.devtest1.presenters.ArticleDetailPresenter;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Article;
 import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
@@ -22,7 +21,7 @@ import com.atcom.nikosstais.warmup.devtest1.remote.data.models.Category;
  */
 public class ArticleDetailActivity extends AppCompatActivity implements ArticleDetailActivityView {
 
-    ArticleDetailPresenter presenter;
+    private ArticleDetailPresenter presenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

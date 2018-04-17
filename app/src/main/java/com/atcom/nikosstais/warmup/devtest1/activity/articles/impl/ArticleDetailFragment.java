@@ -1,4 +1,4 @@
-package com.atcom.nikosstais.warmup.devtest1.activity.articles;
+package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +15,8 @@ import com.squareup.picasso.Picasso;
 
 /**
  * A fragment representing a single Article detail screen.
- * This fragment is either contained in a {@link ArticleListActivity}
- * in two-pane mode (on tablets) or a {@link ArticleDetailActivity}
+ * This fragment is either contained in a {@link com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleListActivity}
+ * in two-pane mode (on tablets) or a {@link com.atcom.nikosstais.warmup.devtest1.activity.articles.impl.ArticleDetailActivity}
  * on handsets.
  */
 public class ArticleDetailFragment extends Fragment {

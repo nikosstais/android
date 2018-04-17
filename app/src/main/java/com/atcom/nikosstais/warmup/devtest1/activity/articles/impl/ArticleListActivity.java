@@ -2,8 +2,8 @@ package com.atcom.nikosstais.warmup.devtest1.activity.articles.impl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.atcom.nikosstais.warmup.devtest1.R;
 import com.atcom.nikosstais.warmup.devtest1.activity.articles.ArticleListActivityView;
@@ -128,7 +129,7 @@ public class ArticleListActivity extends AppCompatActivity
         recyclerView = findViewById(R.id.article_list);
         assert recyclerView != null;
 
-        if (category != null) {
+        if (category != null && getSupportActionBar()!=null) {
             getSupportActionBar().setTitle(category.getName());
         }
 //        if (recyclerView.getAdapter()==null){
@@ -163,7 +164,7 @@ public class ArticleListActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -187,10 +188,9 @@ public class ArticleListActivity extends AppCompatActivity
 
     @Override
     public void displayNoNews() {
-        Snackbar.make(this.getCurrentFocus(),
+        Toast.makeText(this.getApplicationContext(),
                 "Sorry no news here",
-                Snackbar.LENGTH_INDEFINITE);
-
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
